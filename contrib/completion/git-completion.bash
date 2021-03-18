@@ -3016,6 +3016,9 @@ _git_stash ()
 	local save_opts='--all --keep-index --no-keep-index --quiet --patch --include-untracked'
 	local subcommands='push list show apply clear drop pop create branch'
 	local subcommand="$(__git_find_on_cmdline "$subcommands save")"
+	local stash_idx="$(__git_find_on_cmdline --show-idx stash)"
+	stash_idx="${stash_idx% *}"
+
 	if [ -z "$subcommand" -a -n "$(__git_find_on_cmdline "-p")" ]; then
 		subcommand="push"
 	fi
@@ -3060,7 +3063,7 @@ _git_stash ()
 	branch,--*)
 		;;
 	branch,*)
-		if [ $cword -eq 3 ]; then
+		if [ $((cword - stash_idx)) -eq 2 ]; then
 			__git_complete_refs
 		else
 			__gitcomp_nl "$(__git stash list \
