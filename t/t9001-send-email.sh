@@ -513,6 +513,22 @@ do
 
 done
 
+test_expect_success $PREREQ "--validate respects core.hooksPath path" '
+	clean_fake_sendmail &&
+	tmp_dir=$(mktemp -d -t ci-XXXXXXXXXX) &&
+	printf "#!/bin/sh" >> $tmp_dir/sendemail-validate &&
+	printf "return 1" >> $tmp_dir/sendemail-validate &&
+	chmod a+x $tmp_dir/sendemail-validate &&
+	git -c core.hooksPath=$tmp_dir send-email \
+		--from="Example <nobody@example.com>" \
+		--to=nobody@example.com \
+		--smtp-server="$(pwd)/fake.sendmail" \
+		--validate \
+		longline.patch \
+		2>&1 >/dev/null | \
+	grep "rejected by sendemail-validate"
+'
+
 for enc in 7bit 8bit quoted-printable base64
 do
 	test_expect_success $PREREQ "--transfer-encoding=$enc produces correct header" '

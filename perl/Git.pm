@@ -226,6 +226,8 @@ sub repository {
 			$opts{Repository} = abs_path($dir);
 		}
 
+                $opts{HooksPath} = $search->command_oneline('rev-parse', '--git-path', 'hooks');
+
 		delete $opts{Directory};
 	}
 
@@ -619,6 +621,13 @@ Return path to the git repository. Must be called on a repository instance.
 
 sub repo_path { $_[0]->{opts}->{Repository} }
 
+=item hooks_path ()
+
+Return path to the hooks directory. Must be called on a repository instance.
+
+=cut
+
+sub hooks_path { $_[0]->{opts}->{HooksPath} }
 
 =item wc_path ()
 
